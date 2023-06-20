@@ -1,7 +1,7 @@
 /*
 - Creators: Renato Matos Alves Penna, Pedro Araújo Franco
 -
-- Function:
+- Functions:
 -
 - Date: 19/06
 -
@@ -51,7 +51,7 @@ typedef struct Tendereco endereco;
 struct Tcliente
 {
     int codigo_cliente;
-    char nome[50], data_nascimento[10];
+    char nome[70], data_nascimento[10];
     endereco ender;
     int telefone; // sem hifen
 };
@@ -137,6 +137,7 @@ int localiza_fornecedor(FILE *f, int codigo)
 void menu(FILE *f)
 {
     int escolha;
+    printf("\n----MENU----\n");
     printf("Escolha 1 ou 2\n");
     printf("1) Login\n2) Cadastre-se\n");
     escolha = getch();
@@ -159,7 +160,7 @@ void logins(FILE *f)
 {
     int escolha_login;
 
-    printf("Escolha a opção de Login \n");
+    printf("\nEscolha a opção de Login \n");
     printf("1 - Logar como Cliente \n");
     printf("2 - Logar como Fornecedor \n");
     printf("3 - Voltar \n");
@@ -181,7 +182,7 @@ void logins(FILE *f)
 void cadastros(FILE *f)
 {
     int escolha_cadastro;
-    printf("Escolha a opção de cadastro \n");
+    printf("\nEscolha a opção de cadastro \n");
     printf("1 - Cadastro de cliente\n");
     printf("2 - Cadastro de fornecedor \n");
     printf("3 - Voltar \n");
@@ -195,7 +196,7 @@ void cadastros(FILE *f)
         cadastro_fornecedor(f);
         break;
     default:
-        system("clear");
+        system("cls");
         menu(f);
     }
 }
@@ -210,7 +211,7 @@ int main()
     setlocale(LC_ALL, "portuguese");
 
     FILE *f;
-    f = fopen("clientes.txt", "r+b");
+    f = fopen("documentos.txt", "r+b");
     if (f == NULL)
     {
         perror("Erro ao abrir arquivo!");
@@ -218,8 +219,12 @@ int main()
     }
 
     int verifica_usuariolog = 0; // se logado vira 1
-
+ while (verifica_usuariolog==0)
+ {
     menu(f);
+    system("cls");
+ }
+
 
     fclose(f);
     return 0;
@@ -235,7 +240,8 @@ void cadastro_cliente(FILE *f)
     cliente c;
     int posicao, casa_ou_ap;
 
-    printf("Crie um código para a sua conta (recomendado mínimo 6 números): ");
+    printf("\n--CADASTRO DE CLIENTE--");
+    printf("\n\nCrie um código para a sua conta (recomendado mínimo 6 números): ");
     scanf("%d", &c.codigo_cliente);
     posicao = localiza_cliente(f, c.codigo_cliente);
     if (posicao == true)
@@ -246,15 +252,15 @@ void cadastro_cliente(FILE *f)
     {
         printf("Digite seu nome completo: ");
         fflush(stdin);
-        scanf("%s", &c.nome);
+        gets(c.nome);
         printf("Digite seu telefone (apenas números): ");
         scanf("%d", &c.telefone);
         printf("Digite sua data de nascimento (dia/mês/ano): ");
         fflush(stdin);
         scanf("%s", &c.data_nascimento);
-        printf("Mora em apartamento ou casa?");
-        printf("1 - Apartamento");
-        printf("2 - Casa");
+        printf("\nMora em apartamento ou casa?\n");
+        printf("1 - Apartamento\n");
+        printf("2 - Casa\n");
         scanf("%d", &casa_ou_ap);
         if (casa_ou_ap == 1 || casa_ou_ap == 2)
         {
@@ -289,11 +295,12 @@ void cadastro_cliente(FILE *f)
         fflush(stdin);
         gets(c.ender.bairro);
 
-        // Escrever no arquivo
+        // Escrevendo no arquivo
         fseek(f, 0, SEEK_END);
         fwrite(&c, sizeof(c), 1, f);
 
         printf("Usuário cadastrado com sucesso!\n");
+        system("pause");
     }
 }
 
@@ -309,7 +316,8 @@ void cadastro_fornecedor(FILE *f)
     fornecedor f1;
     int posicao;
 
-    printf("Crie um código para sua conta (recomendado mínimo 6 números): ");
+    printf("\n--CADASTRO DE FORNECEDOR--");
+    printf("\n\nCrie um código para sua conta (recomendado mínimo 6 números): ");
     scanf("%d", &f1.cod_fornecedor);
     posicao = localiza_fornecedor(f, f1.cod_fornecedor);
     if (posicao == true)
@@ -324,10 +332,12 @@ void cadastro_fornecedor(FILE *f)
         fflush(stdin);
         scanf("%s", &f1.buffet);
 
-        // Escrever no arquivo
-        printf("Usuário cadastrado com sucesso!\n");
+        // Escrevendo no arquivo
         fseek(f, 0, SEEK_END);
         fwrite(&f1, sizeof(f1), 1, f);
+
+        printf("Usuário cadastrado com sucesso!\n");
+        system("pause");    
     }
 }
 
