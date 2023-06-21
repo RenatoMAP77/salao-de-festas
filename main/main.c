@@ -32,7 +32,7 @@ void cadastros(FILE *f);
 void logins(FILE *f);
 int localiza_fornecedor(FILE *f, int codigo);
 int localiza_cliente(FILE *f, int codigo);
-
+void menu_logado(FILE *f);
 
 
 
@@ -85,18 +85,15 @@ int localiza_cliente(FILE *f, int codigo)
             achou++;
             break;
         }
-        else
-        {
-            continue;
-        }
+        
     }
     if (achou == 1)
     {
-        return true;
+        return true; //achou cliente
     }
     else
     {
-        return false;
+        return false; //nao achou
     }
 }
 
@@ -114,18 +111,15 @@ int localiza_fornecedor(FILE *f, int codigo)
             achou++;
             break;
         }
-        else
-        {
-            continue;
-        }
+        
     }
     if (achou == 1)
     {
-        return true;
+        return true; // achou fornecedor
     }
     else
     {
-        return false;
+        return false; //nao achou fornecedor
     }
 }
 
@@ -201,10 +195,33 @@ void cadastros(FILE *f)
     }
 }
 
+void menu_logado(FILE *f)
+{
+    int escolha;
+    if (tipo_usuariolog =1)//cliente
+    {
+        /* menu do cliente*/
+        printf("Você está logado no sistema!\n\nO que deseja fazer?");
+        printf("1 - Cadastrar uma festa\n"); //FAZER UMA FUNÇÃO QUE PASSE O ID DO CLIENTE LOGADO
+        printf("2 - Calcular valor\n")
+        printf("3 - Status da conta\n");
+        printf("4 - Informações da conta\n");
+        printf("5- Pesquisar clientes e funcionarios pelo ID");
+    }
+    else if (tipo_usuariolog=2)//fornecedor
+    {
+        /*menu do forneceodor */
+        printf("Você está logado no sistema!\n\nO que deseja fazer?");
+    }
+    
+}
 
 
 
-
+// Variável Global para verificar se o usuario está logado
+int verifica_usuariolog = 0; // se logado vira 1
+int tipo_usuariolog = 0 // se 1 é cliente, se 2 é fornecedor
+int idlogado = 0
 // Main
 int main()
 {
@@ -218,13 +235,14 @@ int main()
         exit(-1);
     }
 
-    int verifica_usuariolog = 0; // se logado vira 1
+
  while (verifica_usuariolog==0)
  {
     menu(f);
     system("cls");
  }
-
+//Fazer menu pós login
+    menu_logado(f);
 
     fclose(f);
     return 0;
@@ -307,7 +325,27 @@ void cadastro_cliente(FILE *f)
 // Login cliente
 void login_cliente(FILE *f)
 {
-    // preencher futuramente
+    int cod, useralive;
+     if (verifica_usuariolog==0)
+    {
+        printf("\n--LOGIN DE CLIENTE--\n");
+        printf("Código do cliente:\n");
+        scanf("%d",&cod);
+       useralive = localiza_cliente(f,cod);
+       if (useralive == true)
+       {
+        printf("Cliente logado com sucesso!\n");
+        verifica_usuariolog =1;
+        tipo_usuariolog = 1;
+        system("pause");
+       }
+       else
+       {
+        printf("Erro ao tentar fazer o Login.\nVerifique o código ou cadastre-se antes\n");
+        system("pause");
+        }
+
+    }
 }
 
 // Cadastro Fornecedor
@@ -337,12 +375,32 @@ void cadastro_fornecedor(FILE *f)
         fwrite(&f1, sizeof(f1), 1, f);
 
         printf("Usuário cadastrado com sucesso!\n");
-        system("pause");    
+        system("pause");
     }
 }
 
 void login_fornecedor(FILE *f)
 {
+    int cod,useralive;
+
+    if (verifica_usuariolog==0)
+    {
+        printf("\n--LOGIN FORNECEDOR--\n");
+        printf("Código do fornecedor:\n");
+        scanf("%d",&cod);
+       useralive = localiza_fornecedor(f,cod);
+       if (useralive == true)
+       {
+        printf("Fornecedor logado com sucesso!\n");
+        verifica_usuariolog =1;
+        tipo_usuariolog = 2;
+        system("pause");
+       }
+        else
+        {
+            printf("Erro ao tentar fazer o Login.\nVerifique o código ou cadastre-se antes\n");
+        }
+    }
 
 }
 
