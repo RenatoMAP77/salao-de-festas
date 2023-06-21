@@ -211,7 +211,7 @@ int main()
     setlocale(LC_ALL, "portuguese");
 
     FILE *f;
-    f = fopen("documentos.txt", "r+b");
+    f = fopen("documentos.dat", "r+b");
     if (f == NULL)
     {
         perror("Erro ao abrir arquivo!");
