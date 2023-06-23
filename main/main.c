@@ -20,6 +20,10 @@
 #define false 0
 
 
+// Variável Global para verificar se o usuario está logado
+int verifica_usuariolog = 0; // se logado vira 1
+int tipo_usuariolog = 0; // se 1 é cliente, se 2 é fornecedor
+int idlogado = 0;
 
 
 // Funções
@@ -85,7 +89,7 @@ int localiza_cliente(FILE *f, int codigo)
             achou++;
             break;
         }
-        
+
     }
     if (achou == 1)
     {
@@ -111,7 +115,7 @@ int localiza_fornecedor(FILE *f, int codigo)
             achou++;
             break;
         }
-        
+
     }
     if (achou == 1)
     {
@@ -198,12 +202,12 @@ void cadastros(FILE *f)
 void menu_logado(FILE *f)
 {
     int escolha;
-    if (tipo_usuariolog =1)//cliente
+    if (tipo_usuariolog ==1)//cliente
     {
         /* menu do cliente*/
-        printf("Você está logado no sistema!\n\nO que deseja fazer?");
+        printf("Você está logado no sistema!\n\nO que deseja fazer?\n");
         printf("1 - Cadastrar uma festa\n"); //FAZER UMA FUNÇÃO QUE PASSE O ID DO CLIENTE LOGADO
-        printf("2 - Calcular valor\n")
+        printf("2 - Calcular valor\n");
         printf("3 - Status da conta\n");
         printf("4 - Informações da conta\n");
         printf("5- Pesquisar clientes e funcionarios pelo ID");
@@ -213,15 +217,11 @@ void menu_logado(FILE *f)
         /*menu do forneceodor */
         printf("Você está logado no sistema!\n\nO que deseja fazer?");
     }
-    
+
 }
 
 
 
-// Variável Global para verificar se o usuario está logado
-int verifica_usuariolog = 0; // se logado vira 1
-int tipo_usuariolog = 0 // se 1 é cliente, se 2 é fornecedor
-int idlogado = 0
 // Main
 int main()
 {
