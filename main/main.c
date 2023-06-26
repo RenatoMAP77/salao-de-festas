@@ -1,12 +1,18 @@
-/*
-- Creators: Renato Matos Alves Penna, Pedro Araújo Franco
--
-- Functions:
--
-- Date: 19/06
--
-- Language: Portuguese
-*/
+/********************************************************
+* FILENAME : main.c
+* DESCRIPTION : A system for a party room enterprise. The
+* user can submit partys and write them on a external file.
+* 
+* PUBLIC FUNCTIONS :
+* int FM_CompressFile( FileHandle )
+* int FM_DecompressFile( FileHandle )
+* NOTES :
+* These functions are a part of the FM suite;
+* See IMS FM0121 for detailed description.
+*
+* AUTHOR : Renato Matos & Pedro Araújo
+* START DATE : 15 June 2023
+********************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
