@@ -2,7 +2,7 @@
 * FILENAME : main.c
 * DESCRIPTION : A system for a party room enterprise. The
 * user can submit partys and write them on a external file.
-* 
+*
 * PUBLIC FUNCTIONS :
 * int FM_CompressFile( FileHandle )
 * int FM_DecompressFile( FileHandle )
@@ -106,7 +106,7 @@ struct tcontrato
 typedef struct tcontrato contrato;
 
 struct Tfesta
-{   
+{
     int codigo_festa;
     int codigo_cliente;
     int quantidade_convidados;
@@ -115,7 +115,7 @@ struct Tfesta
     char tema[50];
     int codigo_fornecedor;
     diasemana diasem;
-    
+
 };
 
 typedef struct Tfesta festa;
@@ -176,7 +176,7 @@ int localizafesta(FILE *fp, int codigo)
      int achou = 0;
     festa nova_festa;
     fseek(fp, 0, SEEK_SET);
-    fread(&nova_festa, sizeof(nova_festa), 1, f);
+    fread(&nova_festa, sizeof(nova_festa), 1, fp);
     while (!feof(fp))
     {
         if (codigo == nova_festa.codigo_festa)
@@ -593,8 +593,8 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         printf("\n Código de festa já existe\n");
         return;
       }
-      
-      
+
+
 
     printf("Digite a quantidade de convidados: ");
     scanf("%d", &nova_festa.quantidade_convidados);
@@ -669,7 +669,7 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         return;
     }
  int validador_festa;
- 
+
   validador_festa  = valida_festa(fp, nova_festa.data, nova_festa.minutosInicio, nova_festa.minutosTermino,nova_festa.diasem.sabado);
   if (validador_festa == true)
   {
@@ -740,7 +740,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
             printf("Endereco: rua %s, num %d\n Bairro %s\n",c.ender.rua,c.ender.num_resid,c.ender.bairro);
             printf("Data de nascimento:%s",c.data_nascimento);
 
-           
+
             break;
         }
         else{
@@ -763,7 +763,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
             printf("Telefone: %d\n",f1.telefone);
 
 
-           
+
             break;
         }
         else{
@@ -804,7 +804,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                     minutosfinal = nova_festa.minutosTermino%60;
                     printf("Horario de inicio: %d:%d",horasinicio,minutosinicio);
                     printf("Horário de término: %d:%d",horasfinal,minutosfinal);
-                    
+
                     if (nova_festa.diasem.domingo == true)
                     {
                         printf("Dia da semana: Domingo\n");
@@ -835,19 +835,19 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                     {
                         printf("Dia da semana: Sábado\n");
                     }
-                            
+
                     printf("Código do fornecedor: %d\n", nova_festa.codigo_fornecedor);
                     printf("INFORMAÇÕES DO CONTRATO: \n")
                     //TERMINAR MAIS TARDE
                 }
             }
-            
-            
+
+
 
     }
-    
+
     cadastra_contrato(FILE *fp, int codigo, FILE *fct){
-        
+
          festa nova_festa;
          contrato contrat;
          int op;
@@ -881,10 +881,10 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                         /* 2299,00 */
                         contrat.valor_total = 2299.00;
                     }
-                    
+
                     if((nova_festa.quantidade_convidados>50 && nova_festa.quantidade_convidados <=80)&&(nova_festa.diasem.segunda == true || nova_festa.diasem.terca == true ||nova_festa.diasem.quarta == true || nova_festa.diasem.quinta == true))
                     {
-                     // 3199,00    
+                     // 3199,00
                      contrat.valor_total = 3199.00;
                     }
                     if((nova_festa.quantidade_convidados>50 && nova_festa.quantidade_convidados <=80)&&(nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
@@ -901,8 +901,8 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
                      if((nova_festa.quantidade_convidados>80 && nova_festa.quantidade_convidados <=100) && (nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
                      {
-                           //3999,00  
-                           contrat.valor_total = 3999.00;   
+                           //3999,00
+                           contrat.valor_total = 3999.00;
                      }
                   contrat.status = "A pagar";
                   printf("Como será a forma de pagamento?(Digite o numero correspondente a sua decisao)\n 1-A vista\n 2-Parcelado em 2 vezes\n3-Parcelado em 3 vezes \n 4-Parcelado em 4 vezes ou mais\n");
@@ -948,12 +948,12 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                     contrat.desconto =="0%%";
                     contrat.valor_final = contrat.valor_total;
                   }
-                   
+
                    fseek(fct, 0, SEEK_END);
                  fwrite(&contrat, sizeof(contrat), 1, fct);
                 }
             }
-        
+
     }
 
     void status_conta(FILE fct, FILE *fc)
@@ -976,7 +976,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                     printf("Desconto já aplicado: %s\n",contrat.desconto);
                       printf("Forma de pagamento selecionada: %s\n",contrat.pagamento);
                        printf("Status do pagamento: %s \n\n\n",contrat.status);
-                    
+
                     if (strcmp (contrat.status,"A pagar")==0)
                     {
                     printf("Escolha o que deseja fazer: \n");
@@ -986,20 +986,36 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
                     scanf("%d",&op);
-                    switch(op)
+                    do{
+                        switch(op)
                     {
                         case '1':
                         printf("Processando...\n");
-                        system('pause');
+                        system("pause");
                         contrat.status = "Pago";
-                        printf("Status Pago");
-                        //CONTINUAR DEPOIS
+                        printf("Status: Pago");
+                        break;
+
+                        case'2':
+                        printf("Processando...");
+                        system("pause");
+                        contrat.status="Cancelado";
+                        printf("Status: Cancelado");
+                        break;
+
+                        case '3':
+                        system("cls"); 
+                        exit(0);
+                        default :
+                        printf("Opção inválida!\n");
                     }
+                    }while(op>3 || op<1);
+                    
                     }
                   else if(strcmp(contrat.status,"Cancelado"))
                   {
                     printf("\nEste evento está cancelado!");
-                  }  
+                  }
                   else()
                   //CONTINUAR DEPOIS
                 }
@@ -1010,7 +1026,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
 /*
-    
+
     void status_conta(FILE * f)
     {
         // printf("Status da conta: \n");
@@ -1026,4 +1042,3 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
 
- 
