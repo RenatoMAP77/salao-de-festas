@@ -41,7 +41,7 @@ void logins(FILE *f, FILE *fp,FILE *fc, FILE *fct);
 int localiza_fornecedor(FILE *f, int codigo);
 int localiza_cliente(FILE *fc, int codigo;);
 void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct);
-void cadastra_festas(FILE *f, FILE *fp, FILE *fc);
+void cadastra_festas(FILE *f, FILE *fp, FILE *fc,FILE *fct);
 void pesquisa_cliente_funcionario(FILE * f, FILE *fc);
 int valida_festa(FILE *fp, char data[10], int minutosInicio,int minutosTermino, int sabado);
 void cadastra_contrato(FILE *fp, int codigo, FILE *fct);
@@ -49,6 +49,7 @@ void mostrarfestasdeumcliente(FILE *fp,FILE *fc,FILE *fct);
 int localizafesta(FILE *fp, int codigo);
 void status_conta(FILE *fct, FILE *fc);
 int localizacontrato(FILE *fct, int codigo);
+int validacodigofesta(FILE *fp,int codigo);
 
 // Structs
 struct Tendereco
@@ -234,12 +235,12 @@ void menu(FILE *f, FILE *fp, FILE *fc, FILE *fct)
     {
     // Login
     case '1':
-        logins(f,fp,fc);
+        logins(f,fp,fc,fct);
         break;
 
     // Cadastro
     case '2':
-        cadastros(f,fp,fc);
+        cadastros(f,fp,fc,fct);
         break;
 
     default:
@@ -268,7 +269,7 @@ void logins(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         break;
     default:
     system('cls');
-        menu(f,fp,fp);
+        menu(f,fp,fp,fct);
     }
 }
 
@@ -290,7 +291,7 @@ void cadastros(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         break;
     default:
         system("cls");
-        menu(f,fp,fc);
+        menu(f,fp,fc,fct);
     }
 }
 
@@ -301,7 +302,7 @@ void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct)
     {
         /* menu do cliente*/
         printf("Você está logado no sistema!\n\nO que deseja fazer?\n");
-        printf("1 - Cadastrar uma festa\n"); 
+        printf("1 - Cadastrar uma festa\n");
         printf("2 - Calcular valor\n");
         printf("3 - Status da conta\n");
         printf("4 - Informações da conta\n");
@@ -334,7 +335,7 @@ void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         default:
             printf("Opção inválida! Escolha novamente!");
             system('cls');
-            menu_logado(f,fp,fc);
+            menu_logado(f,fp,fc,fct);
             break;
         }
         if (escolha == 7)
@@ -378,7 +379,7 @@ int main()
         exit(-1);
     }
     FILE *fct;
-    fct = = fopen("contrato.dat", "r+b");
+    fct == fopen("contrato.dat", "r+b");
     if (fct == NULL)
     {
         perror("Erro ao abrir arquivo!");
@@ -796,7 +797,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                 if (cod == nova_festa.codigo_cliente)
                 {
                     printf("Festa encontrada!\n");
-                    printf("Codigo da festa: %s\n", nova_festa.nome);
+                    printf("Codigo da festa: %s\n", nova_festa.codigo_festa);
                     printf("Data da festa: %s\n", nova_festa.data);
                     horasinicio = nova_festa.minutosInicio /60;
                     minutosinicio= nova_festa.minutosInicio%60;
@@ -838,7 +839,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
                     printf("Código do fornecedor: %d\n", nova_festa.codigo_fornecedor);
                     printf("INFORMAÇÕES DO CONTRATO: \n");
-                    
+
                     fseek(fct, 0, SEEK_SET);
                          fread(&contrat, sizeof(contrat), 1, fct);
                          while (!feof(fct))
@@ -919,22 +920,27 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                            //3999,00
                            contrat.valor_total = 3999.00;
                      }
-                  contrat.status = "A pagar";
+                  //contrat.status = {"A pagar"};
+                  strcpy(contrat.status,"A pagar");
                   printf("Como será a forma de pagamento?(Digite o numero correspondente a sua decisao)\n 1-A vista\n 2-Parcelado em 2 vezes\n3-Parcelado em 3 vezes \n 4-Parcelado em 4 vezes ou mais\n");
                  do{
                   scanf("%d",&op);
                   switch(op){
                     case '1':
-                    contrat.pagamento = "A vista";
+                    //contrat.pagamento = "A vista";
+                    strcpy(contrat.pagamento,"A vista");
                     break;
                     case '2':
-                    contrat.pagamento ="2 vezes";
+                    //contrat.pagamento ="2 vezes";
+                    strcpy(contrat.pagamento,"2 vezes");
                     break;
                     case '3':
-                    contrat.pagamento = "3 vezes";
+                    //contrat.pagamento = "3 vezes";
+                    strcpy(contrat.pagamento,"3 vezes");
                     break;
                     case '4':
-                    contrat.pagamento = "4 vezes ou mais";
+                    //contrat.pagamento = "4 vezes ou mais";
+                    strcpy(contrat.pagamento,"2 vezes");
                     break;
                     default:
                     printf("\nOpçao nao disponivel! Digite uma das disponibilizdas acima.\n");
@@ -971,7 +977,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
     }
 
-    void status_conta(FILE fct, FILE *fc)
+    void status_conta(FILE *fct, FILE *fc)
     {
         int cod,localizador,op;
         contrato contrat;
@@ -1007,25 +1013,27 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                         case '1':
                         printf("Processando...\n");
                         system("pause");
-                        contrat.status = "Pago";
+                        //contrat.status = "Pago";
+                        strcpy(contrat.status,"Pago");
                         printf("Status: Pago");
                         break;
 
                         case'2':
                         printf("Processando...");
                         system("pause");
-                        contrat.status="Cancelado";
+                        //contrat.status="Cancelado";
+                        strcpy(contrat.status,"Cancelado");
                         printf("Status: Cancelado");
                         break;
 
                         case '3':
-                        system("cls"); 
+                        system("cls");
                         exit(0);
                         default :
                         printf("Opção inválida!\n");
                     }
                     }while(op>3 || op<1);
-                    
+
                     }
                   else if(strcmp(contrat.status,"Cancelado"))
                   {
@@ -1038,6 +1046,31 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                 }
             }
         }
+    }
+    int validacodigofesta(FILE *fp,int codigo)
+    {
+        festa f;
+        int achou;
+        fseek(fp,0,SEEK_SET);
+        fread(&f,sizeof(f),1,fp);
+        while(!feof(fp) && !achou)
+        {
+            if(codigo==f.codigo_festa)
+            {
+                achou++;
+            }
+            fread(&f,sizeof(f),1,fp);
+        }
+        if(achou)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+
+
     }
 
 
@@ -1056,5 +1089,6 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
     */
+
 
 
