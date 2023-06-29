@@ -49,7 +49,10 @@ void mostrarfestasdeumcliente(FILE *fp,FILE *fc,FILE *fct);
 int localizafesta(FILE *fp, int codigo);
 void status_conta(FILE *fct, FILE *fc);
 int localizacontrato(FILE *fct, int codigo);
-int validacodigofesta(FILE *fp,int codigo);
+void relatoriofestaspelodia(FILE *fp,FILE *fct)
+void mostracontratodafesta(FILE *fct,int codigo);
+void imprime_contrato(FILE *fct);
+
 
 // Structs
 struct Tendereco
@@ -100,7 +103,7 @@ struct tcontrato
     int numero_contrato;
     float valor_total;
     float valor_final;
-    char desconto[4];
+    char desconto[5];
     char status[10];
     char pagamento[10];
 };
@@ -128,8 +131,9 @@ int localiza_cliente(FILE *fc,int codigo)
     int achou = 0;
     cliente c;
     fseek(fc, 0, SEEK_SET);
-    fread(&c, sizeof(c), 1, fc);
-    while (!feof(fc))
+   // fread(&c, sizeof(c), 1, fc);
+    //while (!feof(fc))
+    while (fread(&c, sizeof(c), 1, fc) == 1)
     {
         if (codigo == c.codigo_cliente)
         {
@@ -153,8 +157,9 @@ int localiza_fornecedor(FILE *f, int codigo)
     int achou = 0;
     fornecedor f1;
     fseek(f, 0, SEEK_SET);
-    fread(&f1, sizeof(f1), 1, f);
-    while (!feof(f))
+    //fread(&f1, sizeof(f1), 1, f);
+    //while (!feof(f))
+    while (fread(&f1, sizeof(f1), 1, f) == 1)
     {
         if (codigo == f1.cod_fornecedor)
         {
@@ -177,8 +182,9 @@ int localizafesta(FILE *fp, int codigo)
      int achou = 0;
     festa nova_festa;
     fseek(fp, 0, SEEK_SET);
-    fread(&nova_festa, sizeof(nova_festa), 1, fp);
-    while (!feof(fp))
+    //fread(&nova_festa, sizeof(nova_festa), 1, fp);
+    //while (!feof(fp) && !achou)
+    while (fread(&nova_festa, sizeof(nova_festa), 1, fp) == 1)
     {
         if (codigo == nova_festa.codigo_festa)
         {
@@ -202,8 +208,9 @@ int localizacontrato(FILE *fct, int codigo)
      int achou = 0;
     contrato contrat;
     fseek(fct, 0, SEEK_SET);
-    fread(&contrat, sizeof(contrat), 1, fct);
-    while (!feof(fct))
+    //fread(&contrat, sizeof(contrat), 1, fct);
+    //while (!feof(fct))
+    while (fread(&contrat, sizeof(contrat), 1, fct) == 1)
     {
         if (codigo == contrat.numero_contrato)
         {
@@ -269,7 +276,7 @@ void logins(FILE *f, FILE *fp, FILE *fc, FILE *fct)
         break;
     default:
     system('cls');
-        menu(f,fp,fp,fct);
+        menu(f,fp,fc,fct);
     }
 }
 
@@ -298,16 +305,15 @@ void cadastros(FILE *f, FILE *fp, FILE *fc, FILE *fct)
 void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct)
 {
     int escolha;
-    if (tipo_usuariolog == 1) // cliente
-    {
+    
         /* menu do cliente*/
         printf("Você está logado no sistema!\n\nO que deseja fazer?\n");
         printf("1 - Cadastrar uma festa\n");
-        printf("2 - Calcular valor\n");
-        printf("3 - Status da conta\n");
-        printf("4 - Informações da conta\n");
-        printf("5- Pesquisar clientes e funcionarios pelo ID ou nome\n");
-        printf("6 - Mostrar Festas de um determinado Cliente\n");
+        printf("2 - Status da conta\n");
+        printf("3 - Pesquisar clientes e funcionarios pelo ID ou nome\n");
+        printf("4 - Mostrar Festas de um determinado Cliente\n");
+        printf("5 - Mostrar todas as festas de uma data específica\n");
+        printf("6 - Imprime contratos");
         printf("7 - Sair");
         escolha = getch();
         switch (escolha)
@@ -317,20 +323,21 @@ void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct)
             cadastra_festas(f,fp,fc,fct);
             break;
         case '2':
-           // calcula_valor(f,fp,fc);
+           status_conta(fct,fc);
+
             break;
         case '3':
-           status_conta(fct,fc);
-            break;
-        case '4':
-           // informacoes_conta(f,fp,fc);
-            break;
-        case '5':
             pesquisa_cliente_funcionario(f,fc);
             break;
-            case '6':
+        case '4':
              mostrarfestasdeumcliente(fp,fc,fct);
             break;
+        case '5':
+            //funcionalidade 8 relatorio de festas a partir de uma data
+            relatoriofestaspelodia(fp,fct);
+            break;
+        case 6:
+            imprime_contrato(fct);
 
         default:
             printf("Opção inválida! Escolha novamente!");
@@ -344,12 +351,8 @@ void menu_logado(FILE *f, FILE *fp, FILE *fc, FILE *fct)
             exit(0);
         }
 
-    }
-    else if (tipo_usuariolog = 2) // fornecedor
-    {
-        /*menu do forneceodor */
-        printf("Você está logado no sistema!\n\nO que deseja fazer?");
-    }
+    
+    
 }
 
 // Main
@@ -379,7 +382,7 @@ int main()
         exit(-1);
     }
     FILE *fct;
-    fct == fopen("contrato.dat", "r+b");
+    fct = fopen("contrato.dat", "r+b");
     if (fct == NULL)
     {
         perror("Erro ao abrir arquivo!");
@@ -572,7 +575,7 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
     }
     else
     {
-        printf("Digite o código do cliente: ");
+        printf("Digite o código do cliente: \t");
         scanf("%d", &nova_festa.codigo_cliente);
     }
 
@@ -581,15 +584,15 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
 
     if (existe == false)
     {
-        printf("Cliente não encontrado. Cadastre o cliente antes de cadastrar a festa.\n");
+        printf("\nCliente não encontrado. Cadastre o cliente antes de cadastrar a festa.\n");
         return;
     }
 
-    printf("Digite o código da festa");
-    scanf("%s", nova_festa.codigo_festa);
+    printf("Digite o código da festa:\t");
+    scanf("%d", &nova_festa.codigo_festa);
       int validadorcod;
-      validadorcod = validacodigofesta(fp,nova_festa.codigo_festa);
-      if (validadorcod == false)
+      validadorcod = localizafesta(fp,nova_festa.codigo_festa);
+      if (validadorcod == true)
       {
         printf("\n Código de festa já existe\n");
         return;
@@ -597,10 +600,10 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
 
 
 
-    printf("Digite a quantidade de convidados: ");
+    printf("\nDigite a quantidade de convidados: \t");
     scanf("%d", &nova_festa.quantidade_convidados);
 
-    printf("Digite a data da festa (dd/mm/aaaa): ");
+    printf("\nDigite a data da festa (dd/mm/aaaa): \t");
     fflush(stdin);
     gets(nova_festa.data);
 
@@ -641,7 +644,7 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
 
     }
     int hora, minuto;
-    printf("Digite o horário da festa (hh:mm): ");
+    printf("\nDigite o horário da festa (hh:mm): \t");
     fflush(stdin);
     gets(horario);
 
@@ -652,13 +655,13 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
      nova_festa.minutosInicio = hora * 60 + minuto;
     nova_festa.minutosTermino = nova_festa.minutosInicio + 240; // 4 horas em minutos
 
-    printf("Digite o tema da festa: ");
+    printf("\nDigite o tema da festa:\t");
     fflush(stdin);
     gets(nova_festa.tema);
 
     // Ler o fornecedor
     int codigo_fornecedor;
-    printf("Digite o código do fornecedor: ");
+    printf("\nDigite o código do fornecedor:\t");
     scanf("%d", &nova_festa.codigo_fornecedor);
 
     // Verificar se o fornecedor existe
@@ -672,14 +675,14 @@ void cadastra_festas(FILE *f, FILE *fp, FILE *fc, FILE *fct)
  int validador_festa;
 
   validador_festa  = valida_festa(fp, nova_festa.data, nova_festa.minutosInicio, nova_festa.minutosTermino,nova_festa.diasem.sabado);
-  if (validador_festa == true)
+  if (validador_festa == false)
   {
-    printf("Já existe uma festa neste horário!");
+    printf("\nJá existe uma festa neste horário!");
   }
   else
   {
-     // Realizar o cadastro da festa
-        fseek(f, 0, SEEK_END);
+
+    fseek(f, 0, SEEK_END);
     fwrite(&nova_festa, sizeof(nova_festa), 1, fp);
 
     cadastra_contrato(fp,nova_festa.codigo_festa,fct);
@@ -711,7 +714,9 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
         }
     }
 
-    return true;
+
+return true;
+
 }
 
 
@@ -746,6 +751,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
         }
         else{
             printf("Nao existe nenhum cliente cadastrado com esse codigo!");
+            break;
         }
     }
 
@@ -769,6 +775,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
         }
         else{
             printf("Nao existe nenhum fornecedor cadastrado com este codigo!\n");
+            break;
         }
     }
     }
@@ -862,14 +869,15 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
     }
 
-    cadastra_contrato(FILE *fp, int codigo, FILE *fct){
+   void cadastra_contrato(FILE *fp, int codigo, FILE *fct){
 
          festa nova_festa;
          contrato contrat;
-         int op;
+         int op,criou=0;
             fseek(fp, 0, SEEK_SET);
-            fread(&nova_festa, sizeof(nova_festa), 1, fp);
-            while (!feof(fp))
+            //fread(&nova_festa, sizeof(nova_festa), 1, fp);
+            //while (!feof(fp) && !criou)
+            while (fread(&nova_festa, sizeof(nova_festa), 1, fp) == 1)
             {
                 if (codigo == nova_festa.codigo_festa)
                 {
@@ -880,100 +888,103 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                     if (nova_festa.quantidade_convidados <=30  && (nova_festa.diasem.segunda == true || nova_festa.diasem.terca == true ||nova_festa.diasem.quarta == true || nova_festa.diasem.quinta == true))
                     {
                         /* 1899,00 */
-                        contrat.valor_total = 1899.00;
+                        contrat.valor_total += 1899;
                     }
                     if (nova_festa.quantidade_convidados <=30  && (nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
                     {
                         /* 2099,00 */
-                        contrat.valor_total = 2099.00;
+                        contrat.valor_total += 2099;
                     }
                     if ((nova_festa.quantidade_convidados>30 && nova_festa.quantidade_convidados <=50)  && (nova_festa.diasem.segunda == true || nova_festa.diasem.terca == true ||nova_festa.diasem.quarta == true || nova_festa.diasem.quinta == true))
                     {
                         /* 2199,00 */
-                        contrat.valor_total = 2199.00;
+                        contrat.valor_total += 2199;
                     }
                     if ((nova_festa.quantidade_convidados>30 && nova_festa.quantidade_convidados <=50) && (nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
                     {
                         /* 2299,00 */
-                        contrat.valor_total = 2299.00;
+                        contrat.valor_total += 2299;
                     }
 
                     if((nova_festa.quantidade_convidados>50 && nova_festa.quantidade_convidados <=80)&&(nova_festa.diasem.segunda == true || nova_festa.diasem.terca == true ||nova_festa.diasem.quarta == true || nova_festa.diasem.quinta == true))
                     {
                      // 3199,00
-                     contrat.valor_total = 3199.00;
+                     contrat.valor_total += 3199;
                     }
                     if((nova_festa.quantidade_convidados>50 && nova_festa.quantidade_convidados <=80)&&(nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
                     {
                         //3499,00
-                        contrat.valor_total = 3499.00;
+                        contrat.valor_total = 3499;
                     }
 
                     if((nova_festa.quantidade_convidados>80 && nova_festa.quantidade_convidados <=100)&&(nova_festa.diasem.segunda == true || nova_festa.diasem.terca == true ||nova_festa.diasem.quarta == true || nova_festa.diasem.quinta == true))
                     {
                         //3799,00
-                        contrat.valor_total = 3799.00;
+                        contrat.valor_total += 3799;
                     }
 
                      if((nova_festa.quantidade_convidados>80 && nova_festa.quantidade_convidados <=100) && (nova_festa.diasem.sexta == true || nova_festa.diasem.sabado == true ||nova_festa.diasem.domingo == true))
                      {
                            //3999,00
-                           contrat.valor_total = 3999.00;
+                           contrat.valor_total += 3999;
                      }
-                  //contrat.status = {"A pagar"};
+
                   strcpy(contrat.status,"A pagar");
-                  printf("Como será a forma de pagamento?(Digite o numero correspondente a sua decisao)\n 1-A vista\n 2-Parcelado em 2 vezes\n3-Parcelado em 3 vezes \n 4-Parcelado em 4 vezes ou mais\n");
+                  printf("Como será a forma de pagamento?(Digite o numero correspondente a sua decisão)\n 1-A vista\n 2-Parcelado em 2 vezes\n3-Parcelado em 3 vezes \n 4-Parcelado em 4 vezes ou mais\n");
                  do{
                   scanf("%d",&op);
                   switch(op){
-                    case '1':
+                    case 1:
                     //contrat.pagamento = "A vista";
                     strcpy(contrat.pagamento,"A vista");
                     break;
-                    case '2':
+                    case 2:
                     //contrat.pagamento ="2 vezes";
                     strcpy(contrat.pagamento,"2 vezes");
                     break;
-                    case '3':
+                    case 3:
                     //contrat.pagamento = "3 vezes";
                     strcpy(contrat.pagamento,"3 vezes");
                     break;
-                    case '4':
+                    case 4:
                     //contrat.pagamento = "4 vezes ou mais";
-                    strcpy(contrat.pagamento,"2 vezes");
+                    strcpy(contrat.pagamento,"4 vezes ou mais");
                     break;
                     default:
-                    printf("\nOpçao nao disponivel! Digite uma das disponibilizdas acima.\n");
+                    printf("\nOpção não disponivel! Digite uma das disponibilizdas acima.\n");
                     break;
                   }
                  }
                  while(op>4 || op<1);
 
-                  if (contrat.pagamento == "A vista")
+                  if (strcmp(contrat.pagamento,"A vista")==0)
                   {
-                    contrat.desconto =="10%%";
+                  strcpy(contrat.desconto,"10%%");
                     contrat.valor_final = contrat.valor_total*0.90;
                   }
-                  if (contrat.pagamento == "2 vezes" )
+                  if (strcmp(contrat.pagamento,"2 vezes")==0)
                   {
-                    contrat.desconto =="5%%";
+                    strcpy(contrat.desconto,"5%%");
                     contrat.valor_final = contrat.valor_total*0.95;
                   }
-                  if (contrat.pagamento == "3 vezes" )
+                  if (strcmp(contrat.pagamento,"3 vezes")==0 )
                   {
-                    contrat.desconto =="2%%";
+                   strcpy(contrat.desconto,"2%%");
                     contrat.valor_final = contrat.valor_total*0.98;
                   }
-                  if (contrat.pagamento == "4 vezes ou mais" )
+                  if (strcmp(contrat.pagamento,"4 vezes ou mais")==0)
                   {
-                    contrat.desconto =="0%%";
+                    strcpy(contrat.desconto,"0%%");
                     contrat.valor_final = contrat.valor_total;
                   }
 
-                   fseek(fct, 0, SEEK_END);
-                 fwrite(&contrat, sizeof(contrat), 1, fct);
-                }
+                criou++ ;
             }
+                }
+
+                fseek(fct, 0, SEEK_END);
+               fwrite(&contrat, sizeof(contrat), 1, fct);
+
 
     }
 
@@ -981,16 +992,17 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
     {
         int cod,localizador,op;
         contrato contrat;
-        printf("Digite o código da festa: \n");
+        printf("\nDigite o código da festa: \n");
         scanf("%d",&cod);
         localizador = localizacontrato(fct,cod);
-        if(localizador = false){
+        if(localizador == false){
             printf("Festa/contrato nao encontrados!");
         }
         else{
             fseek(fct, 0, SEEK_SET);
-            fread(&contrat, sizeof(contrat), 1, fct);
-            while (!feof(fct))
+            //fread(&contrat, sizeof(contrat), 1, fct);
+            //while (!feof(fct))
+            while (fread(&contrat, sizeof(contrat), 1, fct) == 1)
             {
                 if(cod==contrat.numero_contrato){
                     printf("Valor a pagar: %2.f\n",contrat.valor_final);
@@ -1015,7 +1027,7 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
                         system("pause");
                         //contrat.status = "Pago";
                         strcpy(contrat.status,"Pago");
-                        printf("Status: Pago");
+                        printf("\nStatus: Pago");
                         break;
 
                         case'2':
@@ -1047,7 +1059,108 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
             }
         }
     }
-    int validacodigofesta(FILE *fp,int codigo)
+
+    void relatoriofestaspelodia(FILE *fp,FILE *fct)
+    {
+        char data[10];
+        int numfesta =1;
+        int horasinicio,minutosinicio,horastermino,minutostermino;
+        printf("\nDigite a data que deseja buscar as festas: ");
+        gets(data);
+        rewind(fp);
+        festa nova_festa;
+         fseek(fp, 0, SEEK_SET);
+         while (fread(&nova_festa, sizeof(nova_festa), 1, fp) == 1)
+         {
+            if((strcmp(data,nova_festa.data)==0))
+            {
+                printf("\n\n---FESTA %d---\n",numfesta);
+                printf("Código da festa: %d\n",nova_festa.codigo_festa);
+                printf("Código do Cliente: %d\n");
+                printf("Quantidade de convidados: %d\n",nova_festa.quantidade_convidados);
+                horasinicio = nova_festa.minutosInicio/60;
+                minutosinicio= nova_festa.minutosInicio%60;
+                horastermino = nova_festa.minutosTermino/60;
+                minutostermino = nova_festa.minutosTermino%60;
+                printf("Horário de início: %d:%d\n",horasinicio,minutosinicio);
+                printf(" Horário final: %d:%d\n",horastermino,minutostermino);
+                if (nova_festa.diasem.domingo == true)
+                    {
+                        printf("Dia da semana: Domingo\n");
+
+                    }
+                    if (nova_festa.diasem.segunda == true)
+                    {
+                        printf("Dia da semana: Segunda-feira\n");
+
+                    }
+                    if (nova_festa.diasem.terca == true)
+                    {
+                        printf("Dia da semana: Terça-feira\n");
+                    }
+                    if (nova_festa.diasem.quarta == true)
+                    {
+                        printf("Dia da semana: Quarta-feira\n");
+                    }
+                    if (nova_festa.diasem.quinta == true)
+                    {
+                        printf("Dia da semana: Quinta-feira\n");
+                    }
+                    if (nova_festa.diasem.sexta == true)
+                    {
+                        printf("Dia da semana: Sexta-feira\n");
+                    }
+                    if (nova_festa.diasem.sabado == true)
+                    {
+                        printf("Dia da semana: Sábado\n");
+                    }
+                    mostracontratodafesta(fct,nova_festa.codigo_festa);
+
+
+                numfesta++;
+            }
+    }
+    }
+
+
+void mostracontratodafesta(FILE *fct,int codigo)
+{
+    contrato contrat;
+    fseek(fct, 0, SEEK_SET);
+    while (fread(&contrat, sizeof(contrat), 1, fct) == 1)
+    {
+        if (codigo == contrat.numero_contrato)
+        {
+            printf("Numero do contrato....:%d \n",contrat.numero_contrato);
+            printf("Codigo da festa....... %d\n",contrat.codigo_festa);
+            printf("Valor total............%2.f \n",contrat.valor_total);
+            printf("Desconto...............%d\n",contrat.desconto);
+            printf("Valor final...........:%.2f\n",contrat.valor_final);
+        }
+    }
+}
+
+
+void imprime_contrato(FILE *fct)
+{
+    int cont=1;
+contrato contrat;
+fseek(fct,0,SEEK_SET);
+fread(&contrat, sizeof(contrat),1, fct);
+while (!feof(fct))
+{
+    printf("\n\n IFORMAÇÕES DO CONTRATO %d\n\n",cont);
+printf("Numero do contrato....:%d \n",contrat.numero_contrato);
+printf("Codigo da festa....... %d\n",contrat.codigo_festa);
+printf("Valor total............%2.f \n",contrat.valor_total);
+printf("Valor final...........:%.2f\n",contrat.valor_final);
+cont++;
+fread(&contrat, sizeof(contrat),1, fct);
+}
+}
+
+
+/*    int validacodigofesta(FILE *fp,int codigo)
     {
         festa f;
         int achou;
@@ -1072,11 +1185,6 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
     }
-
-
-
-/*
-
     void status_conta(FILE * f)
     {
         // printf("Status da conta: \n");
@@ -1089,6 +1197,5 @@ int valida_festa(FILE *fp, char data[10], int minutosInicio, int minutosTermino,
 
 
     */
-
 
 
