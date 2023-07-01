@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1688162048 source:f:\trabalho\aeds\trabalho aeds fundamentos\main\main.c
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<locale.h>
+	<string.h>
+
+1687636867 f:\trabalho\aeds\trabalho aeds fundamentos\main\lorza.h
+
