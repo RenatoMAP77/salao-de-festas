@@ -1,0 +1,13 @@
+Códigos clientes:
+123456 renato matos
+654321 pedro araujo
+
+Codigos fornecedores:
+789654 Splash
+147258 Patati
+
+Código festas:
+cod 25; 28/11/2023; horario: 04:00 até 08:00; pago
+cod 22; 28/11/2023; horario 06:00 até 10:00; cancelado
+cod 45; 01/03/2005; horario 12:00 até 16:00; pago
+cod 2345678; 29/11/2023 horario 18:00 até 22:00 pago!-
