@@ -1,0 +1,10 @@
+Vídeo está na pasta doc/video
+
+Caso o vídeo não abra, aqui está o link para o youtube: https://youtu.be/j9dLZOB9Bn8
+
+O arquivo está em na pasta main -> main.c
+
+O PDF da documentação completa do trabalho está em doc.
+Caso o PDF não abra, aqui está o link para o DOCS: https://docs.google.com/document/d/1mq42t26QDJSbFwcIclefl3MHLijIiGNvWEzVNEuDO70/edit?usp=sharing
+
+Os usuários já cadastrados para teste estão no arquivo Usuarioscadastrados.txts
