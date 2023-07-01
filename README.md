@@ -1,2 +1,3 @@
 # salao-de-festas
-Programa em C de arquivo de acesso direto. Função de Cadastro, login, cadastro de festa, calculo do valor
+Um sistema para uma empresa de salão de festas. O  usuário pode enviar dados de uma festa e escrevê-los em um arquivo externo.
+Este sistema possui sistema de cadastro e login também para Clientes e Fornecedores, podendo ser utilizado para muitos propósitos.
