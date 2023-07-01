@@ -1,6 +1,5 @@
 Códigos clientes:
-123456 renato matos
-654321 pedro araujo
+
 
 Codigos fornecedores:
 789654 Splash
